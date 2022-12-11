@@ -4,7 +4,7 @@ version: '3.9'
 
 services:
   wordpress:
-    image: ${CUSTOM_WORDPRESS_IMAGE_NAME:-wp-compose-wordpress-http}:${WORDPRESS_IMAGE_TAG:-latest}
+    image: ${IMAGE_NAME_PREFIX:-wp-compose}-wordpress-${WORDPRESS_DOCKERFILE_TAG:-http}:${WORDPRESS_IMAGE_TAG:-latest}
     build:
       context: .
       dockerfile: Dockerfile/wordpress:${WORDPRESS_DOCKERFILE_TAG:-http}
