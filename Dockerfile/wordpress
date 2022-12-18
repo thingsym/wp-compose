@@ -3,6 +3,9 @@ ARG PHP_MEMORY_LIMIT
 ARG PHP_UPLOAD_MAX_FILESIZE
 ARG PHP_POST_MAX_SIZE
 ARG PHP_MAX_EXECUTION_TIME
+ARG DOMAIN
+ARG CERT_FILE
+ARG KEY_FILE
 
 FROM wordpress:${WORDPRESS_IMAGE_TAG:-latest}
 
@@ -14,6 +17,15 @@ RUN echo "file_uploads = On\n" \
 	> /usr/local/etc/php/conf.d/uploads.ini \
 	&& rm /usr/src/wordpress/wp-config-docker.php \
 	&& cp /usr/src/wordpress/wp-config-sample.php /usr/src/wordpress/wp-config.php
+
+RUN curl -sSL https://github.com/FiloSottile/mkcert/releases/download/v1.4.4/mkcert-v1.4.4-linux-arm64 -o mkcert \
+	&& chmod +x mkcert \
+	&& mv mkcert /usr/local/bin/mkcert \
+	&& mkcert -install \
+	&& mkcert \
+		-cert-file /etc/ssl/certs/${CERT_FILE:-ssl-cert-snakeoil.pem} \
+		-key-file /etc/ssl/private/${KEY_FILE:-ssl-cert-snakeoil.key} \
+		${DOMAIN:-localhost}
 
 RUN set -eux \
 	&& a2enmod ssl \

@@ -4,13 +4,13 @@ version: '3.9'
 
 services:
   wordpress:
-    image: ${IMAGE_NAME_PREFIX:-wp-compose}-wordpress-${WORDPRESS_DOCKERFILE_TAG:-http}:${WORDPRESS_IMAGE_TAG:-latest}
+    image: ${IMAGE_NAME_PREFIX:-wp-compose}-wordpress:${WORDPRESS_IMAGE_TAG:-latest}
     build:
       context: .
-      dockerfile: Dockerfile/wordpress:${WORDPRESS_DOCKERFILE_TAG:-http}
+      dockerfile: Dockerfile/wordpress
       args:
         WORDPRESS_IMAGE_TAG: "${WORDPRESS_IMAGE_TAG:-latest}"
-    container_name: "${CONTAINER_NAME_PREFIX:-wp_compose}_wordpress_${WORDPRESS_DOCKERFILE_TAG:-http}"
+    container_name: "${CONTAINER_NAME_PREFIX:-wp_compose}_wordpress"
     depends_on:
       database:
         condition: service_started
@@ -30,10 +30,6 @@ services:
       WORDPRESS_TABLE_PREFIX: "${WORDPRESS_TABLE_PREFIX:-wp_}"
       WORDPRESS_DEBUG: "${WORDPRESS_DEBUG:-true}"
     volumes:
-      # SSL/TLS (https)
-      # - ./mkcert/ssl-cert-snakeoil.pem:/etc/ssl/certs/ssl-cert-snakeoil.pem
-      # - ./mkcert/ssl-cert-snakeoil.key:/etc/ssl/private/ssl-cert-snakeoil.key
-
       - ./wordpress:/var/www/html
       - ./backup:/var/www/backup
       - ./import:/var/www/import
