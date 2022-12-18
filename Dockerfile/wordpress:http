@@ -11,7 +11,7 @@ RUN echo "file_uploads = On\n" \
 	"upload_max_filesize = ${PHP_UPLOAD_MAX_FILESIZE:-2M}\n" \
 	"post_max_size       = ${PHP_POST_MAX_SIZE:-8M}\n" \
 	"max_execution_time  = ${PHP_MAX_EXECUTION_TIME:-30}\n" \
-	> /usr/local/etc/php/conf.d/uploads.ini
+	> /usr/local/etc/php/conf.d/uploads.ini \
+	&& rm /usr/src/wordpress/wp-config-docker.php \
+	&& cp /usr/src/wordpress/wp-config-sample.php /usr/src/wordpress/wp-config.php
 
-RUN rm /usr/src/wordpress/wp-config-docker.php
-RUN cp /usr/src/wordpress/wp-config-sample.php /usr/src/wordpress/wp-config.php
