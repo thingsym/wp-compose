@@ -68,6 +68,15 @@ services:
     volumes:
       - ./wordpress:/var/www/html
 
+  mailhog:
+    container_name: "${CONTAINER_NAME_PREFIX:-wp_compose}_mailhog"
+    image: arjenz/mailhog:latest
+    ports:
+      - 1025:1025
+      - 8025:8025
+    networks:
+      - wordpress
+
 networks:
   wordpress:
     driver: bridge

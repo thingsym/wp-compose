@@ -19,3 +19,15 @@ RUN set -eux \
 	&& a2enmod ssl \
 	&& a2ensite default-ssl
 
+RUN echo "[mail function]\n" \
+	"sendmail_path = \"/usr/local/bin/mhsendmail --smtp-addr=mailhog:1025\"\n" \
+	> /usr/local/etc/php/conf.d/mailhog.ini \
+	&& /bin/bash -c 'set -ex && \
+		ARCH=`uname -m` && \
+		if [ "$ARCH" == "aarch64" ]; then \
+				curl -sSL https://github.com/evertiro/mhsendmail/releases/download/v0.2.0-M1/mhsendmail_linux_arm64 -o mhsendmail; \
+		else \
+				curl -sSL https://github.com/mailhog/mhsendmail/releases/download/v0.2.0/mhsendmail_linux_amd64 -o mhsendmail; \
+		fi' \
+	&& chmod +x mhsendmail \
+	&& mv mhsendmail /usr/local/bin/mhsendmail
