@@ -1,0 +1,57 @@
+ARG WORDPRESS_IMAGE_TAG
+ARG PHP_MEMORY_LIMIT
+ARG PHP_UPLOAD_MAX_FILESIZE
+ARG PHP_POST_MAX_SIZE
+ARG PHP_MAX_EXECUTION_TIME
+ARG DOMAIN
+ARG CERT_FILE
+ARG KEY_FILE
+
+FROM wordpress:${WORDPRESS_IMAGE_TAG:-latest}
+
+RUN echo "file_uploads = On\n" \
+	"memory_limit        = ${PHP_MEMORY_LIMIT:-128M}\n" \
+	"upload_max_filesize = ${PHP_UPLOAD_MAX_FILESIZE:-2M}\n" \
+	"post_max_size       = ${PHP_POST_MAX_SIZE:-8M}\n" \
+	"max_execution_time  = ${PHP_MAX_EXECUTION_TIME:-30}\n" \
+	> /usr/local/etc/php/conf.d/uploads.ini \
+	&& rm /usr/src/wordpress/wp-config-docker.php \
+	&& cp /usr/src/wordpress/wp-config-sample.php /usr/src/wordpress/wp-config.php
+
+RUN apt update \
+	&& apt install -y vim default-mysql-client libssl-dev zip gettext libonig-dev chromium \
+	&& docker-php-ext-install pdo_mysql mysqli mbstring
+
+RUN curl -sSL https://github.com/FiloSottile/mkcert/releases/download/v1.4.4/mkcert-v1.4.4-linux-arm64 -o mkcert \
+	&& chmod +x mkcert \
+	&& mv mkcert /usr/local/bin/mkcert \
+	&& mkcert -install \
+	&& mkcert \
+		-cert-file /etc/ssl/certs/${CERT_FILE:-ssl-cert-snakeoil.pem} \
+		-key-file /etc/ssl/private/${KEY_FILE:-ssl-cert-snakeoil.key} \
+		${DOMAIN:-localhost}
+
+RUN set -eux \
+	&& a2enmod ssl \
+	&& a2ensite default-ssl
+
+RUN echo "[mail function]\n" \
+	"sendmail_path = \"/usr/local/bin/mhsendmail --smtp-addr=mailhog:1025\"\n" \
+	> /usr/local/etc/php/conf.d/mailhog.ini \
+	&& /bin/bash -c 'set -ex && \
+		ARCH=`uname -m` && \
+		if [ "$ARCH" == "aarch64" ]; then \
+				curl -sSL https://github.com/evertiro/mhsendmail/releases/download/v0.2.0-M1/mhsendmail_linux_arm64 -o mhsendmail; \
+		else \
+				curl -sSL https://github.com/mailhog/mhsendmail/releases/download/v0.2.0/mhsendmail_linux_amd64 -o mhsendmail; \
+		fi' \
+	&& chmod +x mhsendmail \
+	&& mv mhsendmail /usr/local/bin/mhsendmail
+
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+COPY --from=node:lts /usr/local/include/ /usr/local/include/
+COPY --from=node:lts /usr/local/lib/ /usr/local/lib/
+COPY --from=node:lts /usr/local/bin/ /usr/local/bin/
+
+COPY --from=wordpress:cli /usr/local/bin/wp /usr/local/bin/wp

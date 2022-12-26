@@ -1,0 +1,102 @@
+# WP Compose for unittest version 0.0.1
+
+version: '3.9'
+
+services:
+  wordpress:
+    image: ${IMAGE_NAME_PREFIX:-wp-compose-develop}-wordpress:${WORDPRESS_IMAGE_TAG:-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile/wordpress
+      args:
+        WORDPRESS_IMAGE_TAG: "${WORDPRESS_IMAGE_TAG:-latest}"
+    container_name: "${CONTAINER_NAME_PREFIX:-wp_compose_develop}_wordpress"
+    depends_on:
+      database:
+        condition: service_started
+    restart: always
+    ports:
+      - "${HOST_WEB_SERVER_PORT:-8080}:80"
+      - "${HOST_WEB_SERVER_SSL_PORT:-8443}:443"
+    links:
+      - database
+    networks:
+      - wordpress
+    environment:
+      WORDPRESS_DB_HOST: "${WORDPRESS_DB_HOST:-database:3306}"
+      WORDPRESS_DB_NAME: "${WORDPRESS_DB_NAME:-wordpress}"
+      WORDPRESS_DB_USER: "${WORDPRESS_DB_USER:-admin}"
+      WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASSWORD:-admin}"
+      WORDPRESS_TABLE_PREFIX: "${WORDPRESS_TABLE_PREFIX:-wp_}"
+      WORDPRESS_DEBUG: "${WORDPRESS_DEBUG:-true}"
+    volumes:
+      - ./wordpress:/var/www/html
+      - ./backup:/var/www/backup
+      - ./import:/var/www/import
+
+      # Set the path of the theme or plugin you are developing and comment it out.
+      # - ./plugins/PATH/TO/YOUR_PLUGIN:/var/www/html/wp-content/plugins/YOUR_PLUGIN
+      # - ./themes/PATH/TO/YOUR_THEME:/var/www/html/wp-content/plugins/YOUR_PLUGIN
+
+  database:
+    image: "mariadb:${MARIADB_IMAGE_TAG:-latest}"
+    command:
+      - "--character-set-server=utf8mb4"
+      - "--collation-server=utf8mb4_general_ci"
+    container_name: "${CONTAINER_NAME_PREFIX:-wp_compose_develop}_database"
+    restart: always
+    ports:
+      - "${HOST_DB_SERVER_PORT:-3306}:3306"
+    networks:
+      - wordpress
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-admin}"
+      MYSQL_DATABASE: "${WORDPRESS_DB_NAME:-wordpress}"
+      MYSQL_USER: "${WORDPRESS_DB_USER:-admin}"
+      MYSQL_PASSWORD: "${WORDPRESS_DB_PASSWORD:-admin}"
+    volumes:
+      - ./database:/var/lib/mysql
+
+  wp_cli:
+    image: wordpress:cli
+    container_name: "${CONTAINER_NAME_PREFIX:-wp_compose_develop}_cli"
+    depends_on:
+      - wordpress
+    user: "33:33"
+    networks:
+      - wordpress
+    volumes:
+      - ./wordpress:/var/www/html
+
+  mailhog:
+    container_name: "${CONTAINER_NAME_PREFIX:-wp_compose_develop}_mailhog"
+    image: arjenz/mailhog:latest
+    ports:
+      - 1025:1025
+      - 8025:8025
+    networks:
+      - wordpress
+
+  wordpress_unittest:
+    image: ${IMAGE_NAME_PREFIX:-wp-compose-develop}-wordpress-unittest:${WORDPRESS_IMAGE_TAG:-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile/wordpress-develop
+      args:
+        WORDPRESS_IMAGE_TAG: "${WORDPRESS_IMAGE_TAG:-latest}"
+    container_name: "${CONTAINER_NAME_PREFIX:-wp_compose_develop}_wordpress_unittest"
+    depends_on:
+      - database
+    restart: always
+    links:
+      - database
+    networks:
+      - wordpress
+    volumes:
+      # Set the path of the theme or plugin you are developing and comment it out.
+      # - ./plugins/PATH/TO/YOUR_PLUGIN:/var/www/html/wp-content/plugins/YOUR_PLUGIN
+      # - ./themes/PATH/TO/YOUR_THEME:/var/www/html/wp-content/plugins/YOUR_PLUGIN
+
+networks:
+  wordpress:
+    driver: bridge
