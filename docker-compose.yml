@@ -31,8 +31,8 @@ services:
       WORDPRESS_DEBUG: "${WORDPRESS_DEBUG:-true}"
     volumes:
       - ./wordpress:/var/www/html
-      - ./backup:/var/www/backup
-      - ./import:/var/www/import
+      - ./src/backup:/var/www/backup
+      - ./src/import:/var/www/import
 
   database:
     image: "mariadb:${MARIADB_IMAGE_TAG:-latest}"

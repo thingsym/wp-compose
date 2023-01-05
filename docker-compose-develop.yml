@@ -31,12 +31,12 @@ services:
       WORDPRESS_DEBUG: "${WORDPRESS_DEBUG:-true}"
     volumes:
       - ./wordpress:/var/www/html
-      - ./backup:/var/www/backup
-      - ./import:/var/www/import
+      - ./src/backup:/var/www/backup
+      - ./src/import:/var/www/import
 
       # Set the path of the theme or plugin you are developing and comment it out.
-      # - ./plugins/PATH/TO/YOUR_PLUGIN:/var/www/html/wp-content/plugins/YOUR_PLUGIN
-      # - ./themes/PATH/TO/YOUR_THEME:/var/www/html/wp-content/plugins/YOUR_PLUGIN
+      # - ./src/themes/YOUR_THEME:/var/www/html/wp-content/plugins/YOUR_THEME
+      # - ./src/plugins/YOUR_PLUGIN:/var/www/html/wp-content/plugins/YOUR_PLUGIN
 
   database:
     image: "mariadb:${MARIADB_IMAGE_TAG:-latest}"
@@ -92,10 +92,10 @@ services:
       - database
     networks:
       - wordpress
-    volumes:
-      # Set the path of the theme or plugin you are developing and comment it out.
-      # - ./plugins/PATH/TO/YOUR_PLUGIN:/var/www/html/wp-content/plugins/YOUR_PLUGIN
-      # - ./themes/PATH/TO/YOUR_THEME:/var/www/html/wp-content/plugins/YOUR_PLUGIN
+    # volumes:
+    #   # Set the path of the theme or plugin you are developing and comment it out.
+    #   - ./src/themes/YOUR_THEME:/var/www/html/wp-content/plugins/YOUR_THEME
+    #   - ./src/plugins/YOUR_PLUGIN:/var/www/html/wp-content/plugins/YOUR_PLUGIN
 
 networks:
   wordpress:
