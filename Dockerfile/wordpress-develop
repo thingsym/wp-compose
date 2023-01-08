@@ -1,13 +1,11 @@
 ARG WORDPRESS_IMAGE_TAG
+
+FROM wordpress:${WORDPRESS_IMAGE_TAG:-latest}
+
 ARG PHP_MEMORY_LIMIT
 ARG PHP_UPLOAD_MAX_FILESIZE
 ARG PHP_POST_MAX_SIZE
 ARG PHP_MAX_EXECUTION_TIME
-ARG DOMAIN
-ARG CERT_FILE
-ARG KEY_FILE
-
-FROM wordpress:${WORDPRESS_IMAGE_TAG:-latest}
 
 RUN echo "file_uploads = On\n" \
 	"memory_limit        = ${PHP_MEMORY_LIMIT:-128M}\n" \
@@ -22,21 +20,28 @@ RUN apt update \
 	&& apt install -y vim default-mysql-client libssl-dev zip gettext libonig-dev chromium \
 	&& docker-php-ext-install pdo_mysql mysqli mbstring
 
+ARG MKCERT_CERT_FILE
+ARG MKCERT_KEY_FILE
+ARG LOOPBACK_IP
+ARG DOMAIN
+
 RUN curl -sSL https://github.com/FiloSottile/mkcert/releases/download/v1.4.4/mkcert-v1.4.4-linux-arm64 -o mkcert \
 	&& chmod +x mkcert \
 	&& mv mkcert /usr/local/bin/mkcert \
 	&& mkcert -install \
 	&& mkcert \
-		-cert-file /etc/ssl/certs/${CERT_FILE:-ssl-cert-snakeoil.pem} \
-		-key-file /etc/ssl/private/${KEY_FILE:-ssl-cert-snakeoil.key} \
-		${DOMAIN:-localhost}
+		-cert-file /etc/ssl/certs/${MKCERT_CERT_FILE:-ssl-cert-snakeoil.pem} \
+		-key-file /etc/ssl/private/${MKCERT_KEY_FILE:-ssl-cert-snakeoil.key} \
+		${DOMAIN:-localhost} ${LOOPBACK_IP:-127.0.0.1}
 
 RUN set -eux \
 	&& a2enmod ssl \
 	&& a2ensite default-ssl
 
+ARG MAILHOG_SMTP_PORT
+
 RUN echo "[mail function]\n" \
-	"sendmail_path = \"/usr/local/bin/mhsendmail --smtp-addr=mailhog:1025\"\n" \
+	"sendmail_path = \"/usr/local/bin/mhsendmail --smtp-addr=mailhog:${MAILHOG_SMTP_PORT:-1025}\"\n" \
 	> /usr/local/etc/php/conf.d/mailhog.ini \
 	&& /bin/bash -c 'set -ex && \
 		ARCH=`uname -m` && \
