@@ -4,7 +4,7 @@ version: '3.9'
 
 services:
   wordpress:
-    image: ${IMAGE_NAME_PREFIX:-wp-compose-develop}-wordpress:${WORDPRESS_IMAGE_TAG:-latest}
+    image: wp-compose--${DOMAIN:-localhost}--wordpress:${WORDPRESS_IMAGE_TAG:-latest}
     build:
       context: .
       dockerfile: Dockerfile/wordpress
@@ -12,7 +12,7 @@ services:
         WORDPRESS_IMAGE_TAG: "${WORDPRESS_IMAGE_TAG:-latest}"
         LOOPBACK_IP: "${LOOPBACK_IP:-127.0.0.1}"
         DOMAIN: "${DOMAIN:-localhost}"
-    container_name: "${CONTAINER_NAME_PREFIX:-wp_compose_develop}_wordpress"
+    container_name: "wp-compose--${DOMAIN:-localhost}--wordpress"
     depends_on:
       database:
         condition: service_started
@@ -47,7 +47,7 @@ services:
     command:
       - "--character-set-server=utf8mb4"
       - "--collation-server=utf8mb4_general_ci"
-    container_name: "${CONTAINER_NAME_PREFIX:-wp_compose_develop}_database"
+    container_name: "wp-compose--${DOMAIN:-localhost}--database"
     restart: always
     ports:
       - "${LOOPBACK_IP:-127.0.0.1}:3306:3306"
@@ -63,7 +63,7 @@ services:
 
   wp_cli:
     image: wordpress:cli
-    container_name: "${CONTAINER_NAME_PREFIX:-wp_compose_develop}_cli"
+    container_name: "wp-compose--${DOMAIN:-localhost}--cli"
     depends_on:
       - wordpress
     user: "33:33"
@@ -73,7 +73,7 @@ services:
       - ./wordpress:/var/www/html
 
   mailhog:
-    container_name: "${CONTAINER_NAME_PREFIX:-wp_compose_develop}_mailhog"
+    container_name: "wp-compose--${DOMAIN:-localhost}--mailhog"
     image: arjenz/mailhog:latest
     ports:
       - "${LOOPBACK_IP:-127.0.0.1}:1025:1025"
@@ -82,13 +82,13 @@ services:
       - wordpress
 
   wordpress_unittest:
-    image: ${IMAGE_NAME_PREFIX:-wp-compose-develop}-wordpress-unittest:${WORDPRESS_IMAGE_TAG:-latest}
+    image: wp-compose--${DOMAIN:-localhost}--wordpress-unittest:${WORDPRESS_IMAGE_TAG:-latest}
     build:
       context: .
       dockerfile: Dockerfile/wordpress-develop
       args:
         WORDPRESS_IMAGE_TAG: "${WORDPRESS_IMAGE_TAG:-latest}"
-    container_name: "${CONTAINER_NAME_PREFIX:-wp_compose_develop}_wordpress_unittest"
+    container_name: "wp-compose--${DOMAIN:-localhost}--wordpress-unittest"
     depends_on:
       - database
     restart: always
