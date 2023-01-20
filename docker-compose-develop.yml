@@ -27,7 +27,7 @@ services:
     networks:
       - wordpress
     environment:
-      WORDPRESS_DB_HOST: "${WORDPRESS_DB_HOST:-database:3306}"
+      WORDPRESS_DB_HOST: "${WORDPRESS_DB_HOST:-database}"
       WORDPRESS_DB_NAME: "${WORDPRESS_DB_NAME:-wordpress}"
       WORDPRESS_DB_USER: "${WORDPRESS_DB_USER:-admin}"
       WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASSWORD:-admin}"
