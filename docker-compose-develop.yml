@@ -39,7 +39,7 @@ services:
       - ./src/import:/var/www/import
 
       # Set the path of the theme or plugin you are developing and comment it out.
-      # - ./src/themes/YOUR_THEME:/var/www/html/wp-content/plugins/YOUR_THEME
+      # - ./src/themes/YOUR_THEME:/var/www/html/wp-content/themes/YOUR_THEME
       # - ./src/plugins/YOUR_PLUGIN:/var/www/html/wp-content/plugins/YOUR_PLUGIN
 
   database:
@@ -98,7 +98,7 @@ services:
       - wordpress
     # volumes:
     #   # Set the path of the theme or plugin you are developing and comment it out.
-    #   - ./src/themes/YOUR_THEME:/var/www/html/wp-content/plugins/YOUR_THEME
+    #   - ./src/themes/YOUR_THEME:/var/www/html/wp-content/themes/YOUR_THEME
     #   - ./src/plugins/YOUR_PLUGIN:/var/www/html/wp-content/plugins/YOUR_PLUGIN
 
 networks:
