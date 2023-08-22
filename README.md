@@ -24,6 +24,16 @@ The **docker-wp** command is a shortcut that specifies the launched WordPress co
 
 Installation is as follows:
 
+#### 1. Use setup-alias command
+
+```
+bash command/setup-alias.sh
+```
+
+Skip to 4, after running the command
+
+Or set manually
+
 #### 1. Open .zshrc
 
 ```
@@ -81,6 +91,14 @@ Now you need to add the mkcert root keys to your system key chain:
 
 for Mac
 
+Use setup-mkcert command
+
+```
+sudo bash command/setup-mkcert.sh
+```
+
+Or set manually
+
 ```
 # Copy mkcert root keys in docker container to your PC.
 docker-compose cp wordpress:/root/.local/share/mkcert ./src
@@ -90,6 +108,18 @@ sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keyc
 ```
 
 You can check cert name as `mkcert root@buildkitsandboxkeychain` through Keychain Access.app
+
+#### 3. Build WordPress site
+
+Use wp-build command
+
+```
+bash command/wp-build.sh
+```
+
+Skip to 5, after running the command
+
+Or set manually
 
 #### 3. Create WordPress config
 
@@ -150,6 +180,14 @@ Now you need to add the mkcert root keys to your system key chain:
 
 for Mac
 
+Use setup-mkcert command
+
+```
+sudo bash command/setup-mkcert.sh
+```
+
+Or set manually
+
 ```
 # Copy mkcert root keys in docker container to your PC.
 docker-compose cp wordpress:/root/.local/share/mkcert ./src
@@ -159,6 +197,18 @@ sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keyc
 ```
 
 You can check cert name as `mkcert root@buildkitsandboxkeychain` through Keychain Access.app
+
+#### 3. Build WordPress site
+
+Use wp-build command
+
+```
+bash command/wp-build.sh
+```
+
+Skip to 5, after running the command
+
+Or set manually
 
 #### 3. Create WordPress config
 
@@ -237,6 +287,14 @@ vi .env
 
 Add a loopback alias.
 
+Use setup-ifconfig command
+
+```
+sudo bash command/setup-ifconfig.sh
+```
+
+Or set manually
+
 ```
 sudo ifconfig lo0 alias 127.56.0.1 netmask 0xff000000
 ```
@@ -263,6 +321,14 @@ sudo ifconfig lo0 -alias 127.56.0.1 netmask 0xff000000
 
 Add IP address and domain to `/etc/hosts`.
 
+Use setup-hosts command
+
+```
+sudo bash command/setup-hosts.sh
+```
+
+Or set manually
+
 ```
 sudo vi /etc/hosts
 ```
@@ -287,6 +353,14 @@ Now you need to add the mkcert root keys to your system key chain:
 
 for Mac
 
+Use setup-mkcert command
+
+```
+sudo bash command/setup-mkcert.sh
+```
+
+Or set manually
+
 ```
 # Copy mkcert root keys in docker container to your PC.
 docker-compose cp wordpress:/root/.local/share/mkcert ./src
@@ -296,6 +370,18 @@ sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keyc
 ```
 
 You can check cert name as `mkcert root@buildkitsandboxkeychain` through Keychain Access.app
+
+#### 6. Build WordPress site
+
+Use wp-build command
+
+```
+bash command/wp-build.sh
+```
+
+Skip to 8, after running the command
+
+Or set manually
 
 #### 6. Create WordPress config
 
@@ -382,6 +468,7 @@ Directory structure of the WP Compose is as follows.
 
 * .env (Docker Compose environment variable file)
 * CHANGELOG.md
+* command (stores command script)
 * Dockerfile (stores Dockerfile files)
 	* wordpress (Dockerfile for WordPress image)
 	* wordpress-develop (Dockerfile for unit test image)
@@ -402,9 +489,7 @@ Directory structure of the WP Compose is as follows.
 
 ### How do you develop themes/plugins with WP Compose?
 
-There are two ways to put the themes/plugins you are developing.
-
-One is to put its in the `/src/themes` or `/src/plugins` folder and mount it to WordPress container.
+To put the themes/plugins you are developing in the `/src/themes` or `/src/plugins` folder and mount it to WordPress container.
 
 Set volumes in docker-compose.yml.
 
@@ -415,12 +500,16 @@ volumes:
 	- ./src/plugins/YOUR_PLUGIN:/var/www/html/wp-content/plugins/YOUR_PLUGIN
 ```
 
-Another is to put its in the `wp-content/themes` or `wp-content/plugins` folder inside WordPress container.
-
-### Export SQL file using  WP-CLI
+### Export SQL file using WP-CLI
 
 ```
 docker-wp db export /var/www/backup/backup-`date +%Y%m%d%H%M%S`.sql
+```
+
+Or alternatively use the command
+
+```
+bash command/db-backup.sh
 ```
 
 ### Import SQL file
@@ -435,6 +524,12 @@ Download unit test data from https://github.com/WPTT/theme-test-data and import.
 
 ```
 docker exec -it $(docker-compose --project-name `echo $(pwd) | awk -F "/" '{ print $NF }'` ps -q wordpress) sh -c 'curl https://raw.githubusercontent.com/WPTRT/theme-unit-test/master/themeunittestdata.wordpress.xml -o themeunittestdata.wordpress.xml' && docker-wp --path=/var/www/html plugin install wordpress-importer --activate && docker-wp --path=/var/www/html import themeunittestdata.wordpress.xml --authors=create && docker-wp --path=/var/www/html plugin deactivate wordpress-importer && docker exec -it $(docker-compose --project-name `echo $(pwd) | awk -F "/" '{ print $NF }'` ps -q wordpress) sh -c 'rm themeunittestdata.wordpress.xml'
+```
+
+Also if you use the command, you can do it all at once from the wordpress build.
+
+```
+bash command/wp-build-testdata.sh
 ```
 
 ### Install and run PHPUnit Unittest inside the unit test container
