@@ -66,11 +66,13 @@ services:
     container_name: "wp-compose--${DOMAIN:-localhost}--cli"
     depends_on:
       - wordpress
+      - wordpress_unittest
     user: "33:33"
     networks:
       - wordpress
     volumes:
       - ./wordpress:/var/www/html
+      - ./wordpress_e2e:/var/www/html
 
   mailhog:
     container_name: "wp-compose--${DOMAIN:-localhost}--mailhog"
@@ -88,18 +90,33 @@ services:
       dockerfile: Dockerfile/wordpress-develop
       args:
         WORDPRESS_IMAGE_TAG: "${WORDPRESS_IMAGE_TAG:-latest}"
+        LOOPBACK_IP: "${LOOPBACK_IP_FOR_E2E:-127.0.0.1}"
+        DOMAIN: "${DOMAIN_FOR_E2E:-localhost}"
     container_name: "wp-compose--${DOMAIN:-localhost}--wordpress-unittest"
     depends_on:
       - database
     restart: always
+    ports:
+      - "${LOOPBACK_IP_FOR_E2E:-127.0.0.1}:8080:80"
+    extra_hosts:
+      - "${DOMAIN_FOR_E2E:-localhost}:127.0.0.1"
     links:
       - database
     networks:
       - wordpress
-    # volumes:
-    #   # Set the path of the theme or plugin you are developing and comment it out.
-    #   - ./src/themes/YOUR_THEME:/var/www/html/wp-content/themes/YOUR_THEME
-    #   - ./src/plugins/YOUR_PLUGIN:/var/www/html/wp-content/plugins/YOUR_PLUGIN
+    environment:
+      WORDPRESS_DB_HOST: "${WORDPRESS_DB_HOST:-database}"
+      WORDPRESS_DB_NAME: "${WORDPRESS_DB_NAME:-wordpress}_e2e"
+      WORDPRESS_DB_USER: "${WORDPRESS_DB_USER:-admin}"
+      WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASSWORD:-admin}"
+      WORDPRESS_TABLE_PREFIX: "${WORDPRESS_TABLE_PREFIX:-wp_}"
+      WORDPRESS_DEBUG: "${WORDPRESS_DEBUG:-true}"
+    volumes:
+      - ./wordpress_e2e:/var/www/html
+
+      # # Set the path of the theme or plugin you are developing and comment it out.
+      # - ./src/themes/YOUR_THEME:/var/www/html/wp-content/themes/YOUR_THEME
+      # - ./src/plugins/YOUR_PLUGIN:/var/www/html/wp-content/plugins/YOUR_PLUGIN
 
 networks:
   wordpress:
