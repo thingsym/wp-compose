@@ -1,7 +1,5 @@
 # WP Compose with unittest Version 1.2.0
 
-version: '3.9'
-
 services:
   wordpress:
     image: wp-compose--${DOMAIN:-localhost}--wordpress:${WORDPRESS_IMAGE_TAG:-latest}
@@ -34,13 +32,23 @@ services:
       WORDPRESS_TABLE_PREFIX: "${WORDPRESS_TABLE_PREFIX:-wp_}"
       WORDPRESS_DEBUG: "${WORDPRESS_DEBUG:-true}"
     volumes:
-      - ./wordpress:/var/www/html
-      - ./src/backup:/var/www/backup
-      - ./src/import:/var/www/import
+      - type: bind
+        source: ./wordpress
+        target: /var/www/html
+      - type: bind
+        source: ./src/backup
+        target: /var/www/backup
+      - type: bind
+        source: ./src/import
+        target: /var/www/import
 
       # Set the path of the theme or plugin you are developing and comment it out.
-      # - ./src/themes/YOUR_THEME:/var/www/html/wp-content/themes/YOUR_THEME
-      # - ./src/plugins/YOUR_PLUGIN:/var/www/html/wp-content/plugins/YOUR_PLUGIN
+      # - type: bind
+      #   source: ./src/themes/YOUR_THEME
+      #   target: /var/www/html/wp-content/themes/YOUR_THEME
+      # - type: bind
+      #   source: ./src/plugins/YOUR_PLUGIN
+      #   target: /var/www/html/wp-content/plugins/YOUR_PLUGIN
 
   database:
     image: "mariadb:${MARIADB_IMAGE_TAG:-latest}"
@@ -59,7 +67,9 @@ services:
       MYSQL_USER: "${WORDPRESS_DB_USER:-admin}"
       MYSQL_PASSWORD: "${WORDPRESS_DB_PASSWORD:-admin}"
     volumes:
-      - ./database:/var/lib/mysql
+      - type: bind
+        source: ./database
+        target: /var/lib/mysql
 
   wp_cli:
     image: wordpress:cli
@@ -71,8 +81,12 @@ services:
     networks:
       - wordpress
     volumes:
-      - ./wordpress:/var/www/html
-      - ./wordpress_e2e:/var/www/html
+      - type: bind
+        source: ./wordpress
+        target: /var/www/html
+      - type: bind
+        source: ./wordpress_e2e
+        target: /var/www/html
 
   mailhog:
     container_name: "wp-compose--${DOMAIN:-localhost}--mailhog"
@@ -112,11 +126,17 @@ services:
       WORDPRESS_TABLE_PREFIX: "${WORDPRESS_TABLE_PREFIX:-wp_}"
       WORDPRESS_DEBUG: "${WORDPRESS_DEBUG:-true}"
     volumes:
-      - ./wordpress_e2e:/var/www/html
+      - type: bind
+        source: ./wordpress_e2e
+        target: /var/www/html
 
-      # # Set the path of the theme or plugin you are developing and comment it out.
-      # - ./src/themes/YOUR_THEME:/var/www/html/wp-content/themes/YOUR_THEME
-      # - ./src/plugins/YOUR_PLUGIN:/var/www/html/wp-content/plugins/YOUR_PLUGIN
+      # Set the path of the theme or plugin you are developing and comment it out.
+      # - type: bind
+      #   source: ./src/themes/YOUR_THEME
+      #   target: /var/www/html/wp-content/themes/YOUR_THEME
+      # - type: bind
+      #   source: ./src/plugins/YOUR_PLUGIN
+      #   target: /var/www/html/wp-content/plugins/YOUR_PLUGIN
 
 networks:
   wordpress:
