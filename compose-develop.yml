@@ -10,6 +10,7 @@ services:
         WORDPRESS_IMAGE_TAG: "${WORDPRESS_IMAGE_TAG:-latest}"
         LOOPBACK_IP: "${LOOPBACK_IP:-127.0.0.1}"
         DOMAIN: "${DOMAIN:-localhost}"
+        TIMEZONE: "${TIMEZONE:-UTC}"
     container_name: "wp-compose--${DOMAIN:-localhost}--wordpress"
     depends_on:
       database:
@@ -106,6 +107,7 @@ services:
         WORDPRESS_IMAGE_TAG: "${WORDPRESS_IMAGE_TAG:-latest}"
         LOOPBACK_IP: "${LOOPBACK_IP_FOR_E2E:-127.0.0.1}"
         DOMAIN: "${DOMAIN_FOR_E2E:-localhost}"
+        TIMEZONE: "${TIMEZONE:-UTC}"
     container_name: "wp-compose--${DOMAIN:-localhost}--wordpress-unittest"
     depends_on:
       - database

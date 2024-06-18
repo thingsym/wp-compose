@@ -2,6 +2,10 @@ ARG WORDPRESS_IMAGE_TAG
 
 FROM wordpress:${WORDPRESS_IMAGE_TAG:-latest}
 
+ARG TIMEZONE
+
+ENV TZ ${TIMEZONE:-UTC}
+
 ARG PHP_MEMORY_LIMIT
 ARG PHP_UPLOAD_MAX_FILESIZE
 ARG PHP_POST_MAX_SIZE
@@ -13,6 +17,9 @@ RUN echo "file_uploads = On\n" \
 	"post_max_size       = ${PHP_POST_MAX_SIZE:-8M}\n" \
 	"max_execution_time  = ${PHP_MAX_EXECUTION_TIME:-30}\n" \
 	> /usr/local/etc/php/conf.d/uploads.ini \
+	&& echo "[Date]\n"\
+	"date.timezone = ${TIMEZONE:-UTC}\n"\
+		> /usr/local/etc/php/conf.d/timezone.ini\
 	&& rm /usr/src/wordpress/wp-config-docker.php \
 	&& cp /usr/src/wordpress/wp-config-sample.php /usr/src/wordpress/wp-config.php
 
