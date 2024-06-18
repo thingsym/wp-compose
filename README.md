@@ -43,7 +43,7 @@ vi ~/.zshrc
 #### 2. Add alias
 
 ```
-alias docker-wp='docker run -it --rm --volumes-from $(docker-compose --project-name `echo $(pwd) | awk -F "/" '"'"'{ print $NF }'"'"'` ps -q wordpress) --network container:$(docker-compose --project-name `echo $(pwd) | awk -F "/" '"'"'{ print $NF }'"'"'` ps -q wordpress) wordpress:cli'
+alias docker-wp='docker run -it --rm --volumes-from $(docker compose --project-name `echo $(pwd) | awk -F "/" '"'"'{ print $NF }'"'"'` ps -q wordpress) --network container:$(docker compose --project-name `echo $(pwd) | awk -F "/" '"'"'{ print $NF }'"'"'` ps -q wordpress) wordpress:cli'
 ```
 
 #### 3. Reload .zshrc
@@ -78,11 +78,11 @@ WP Compose has two uses. One is to simply Acsess a WordPress Site. The other add
 
 #### 1. Launch Docker containers
 
-Builds, (re)creates, starts, and attaches to containers for WordPress development environment. Docker Compose configuration file uses **docker-compose.yml**.
+Builds, (re)creates, starts, and attaches to containers for WordPress development environment. Docker Compose configuration file uses **compose.yml**.
 
 ```
 cd wp-compose-x.x.x
-docker-compose up -d
+docker compose up -d
 ```
 
 #### 2. Set up mkcert for HTTPS (just once)
@@ -101,7 +101,7 @@ Or set manually
 
 ```
 # Copy mkcert root keys in docker container to your PC.
-docker-compose cp wordpress:/root/.local/share/mkcert ./src
+docker compose cp wordpress:/root/.local/share/mkcert ./src
 
 # Add trusted-cert to System.keychain.
 sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ./src/mkcert/rootCA.pem
@@ -142,36 +142,36 @@ docker-wp --path=/var/www/html core install --url='https://localhost' --title='t
 #### Start/Stop containers
 
 ```
-docker-compose start
+docker compose start
 ```
 
 ```
-docker-compose stop
+docker compose stop
 ```
 
 #### Delete containers with volumes
 
 ```
-docker-compose down -v
+docker compose down -v
 ```
 
 Or added remove Docker Image
 
 ```
-docker-compose down -v --rmi all
+docker compose down -v --rmi all
 ```
 
 ### Launch localhost (127.0.0.1) with unit test container
 
 #### 1. Launch Docker containers
 
-Builds, (re)creates, starts, and attaches to containers for WordPress development environment. Docker Compose configuration file uses **docker-compose-develop.yml**.
+Builds, (re)creates, starts, and attaches to containers for WordPress development environment. Docker Compose configuration file uses **compose-develop.yml**.
 
-**Note**: Always pass the **docker-compose-develop.yml** compose file as a parameter to the docker compose command. `-f docker-compose-develop.yml`
+**Note**: Always pass the **compose-develop.yml** compose file as a parameter to the docker compose command. `-f compose-develop.yml`
 
 ```
 cd wp-compose-x.x.x
-docker-compose -f docker-compose-develop.yml up -d
+docker compose -f compose-develop.yml up -d
 ```
 
 #### 2. Set up mkcert for HTTPS (just once)
@@ -190,7 +190,7 @@ Or set manually
 
 ```
 # Copy mkcert root keys in docker container to your PC.
-docker-compose cp wordpress:/root/.local/share/mkcert ./src
+docker compose cp wordpress:/root/.local/share/mkcert ./src
 
 # Add trusted-cert to System.keychain.
 sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ./src/mkcert/rootCA.pem
@@ -231,23 +231,23 @@ docker-wp --path=/var/www/html core install --url='https://localhost' --title='t
 #### Start/Stop containers
 
 ```
-docker-compose -f docker-compose-develop.yml start
+docker compose -f compose-develop.yml start
 ```
 
 ```
-docker-compose -f docker-compose-develop.yml stop
+docker compose -f compose-develop.yml stop
 ```
 
 #### Delete containers with volumes
 
 ```
-docker-compose -f docker-compose-develop.yml down -v
+docker compose -f compose-develop.yml down -v
 ```
 
 Or added remove Docker Image
 
 ```
-docker-compose -f docker-compose-develop.yml down -v --rmi all
+docker compose -f compose-develop.yml down -v --rmi all
 ```
 
 #### Access the console inside the unit test container
@@ -255,7 +255,7 @@ docker-compose -f docker-compose-develop.yml down -v --rmi all
 Access the console with Your SERVICE name.
 
 ```
-docker-compose exec wordpress_unittest /bin/bash
+docker compose exec wordpress_unittest /bin/bash
 ```
 
 Or access the console with Your Container NAME.
@@ -341,10 +341,10 @@ sudo vi /etc/hosts
 
 Builds, (re)creates, starts, and attaches to containers for WordPress development environment.
 
-When using the unit test container, pass the **docker-compose-develop.yml** compose file as a parameter to the docker compose command. `-f docker-compose-develop.yml`
+When using the unit test container, pass the **compose-develop.yml** compose file as a parameter to the docker compose command. `-f compose-develop.yml`
 
 ```
-docker-compose up -d
+docker compose up -d
 ```
 
 #### 5. Set up mkcert for HTTPS (just once)
@@ -363,7 +363,7 @@ Or set manually
 
 ```
 # Copy mkcert root keys in docker container to your PC.
-docker-compose cp wordpress:/root/.local/share/mkcert ./src
+docker compose cp wordpress:/root/.local/share/mkcert ./src
 
 # Add trusted-cert to System.keychain.
 sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ./src/mkcert/rootCA.pem
@@ -404,23 +404,23 @@ docker-wp --path=/var/www/html core install --url='https://wp-compose.test' --ti
 #### Start/Stop containers
 
 ```
-docker-compose start
+docker compose start
 ```
 
 ```
-docker-compose stop
+docker compose stop
 ```
 
 #### Delete containers with volumes
 
 ```
-docker-compose down -v
+docker compose down -v
 ```
 
 Or added remove Docker Image
 
 ```
-docker-compose down -v --rmi all
+docker compose down -v --rmi all
 ```
 
 ## Coustomize WP Compose settings (.env)
@@ -475,8 +475,8 @@ Directory structure of the WP Compose is as follows.
 * LICENSE
 * README.md
 * database (stores Database data failes. synchronize to `/var/lib/mysql` inside Database container. Create automatically when Launch Database container. If it already exists, don't create it.)
-* docker-compose-develop.yml (Compose specification for localhost with unit test container)
-* docker-compose.yml (Compose specification for localhost)
+* compose-develop.yml (Compose specification for localhost with unit test container)
+* compose.yml (Compose specification for localhost)
 * src (stores source files)
 	* backup (stores backup file. synchronize to `/var/www/backup` inside WordPress container.)
 	* import (stores import file. synchronize to `/var/www/import` inside WordPress container.)
@@ -491,7 +491,7 @@ Directory structure of the WP Compose is as follows.
 
 To put the themes/plugins you are developing in the `/src/themes` or `/src/plugins` folder and mount it to WordPress container.
 
-Set volumes in docker-compose.yml.
+Set volumes in compose.yml.
 
 ```
 volumes:
@@ -523,7 +523,7 @@ docker-wp --path=/var/www/html db reset --yes && docker-wp --path=/var/www/html 
 Download unit test data from https://github.com/WPTT/theme-test-data and import.
 
 ```
-docker exec -it $(docker-compose --project-name `echo $(pwd) | awk -F "/" '{ print $NF }'` ps -q wordpress) sh -c 'curl https://raw.githubusercontent.com/WPTRT/theme-unit-test/master/themeunittestdata.wordpress.xml -o themeunittestdata.wordpress.xml' && docker-wp --path=/var/www/html plugin install wordpress-importer --activate && docker-wp --path=/var/www/html import themeunittestdata.wordpress.xml --authors=create && docker-wp --path=/var/www/html plugin deactivate wordpress-importer && docker exec -it $(docker-compose --project-name `echo $(pwd) | awk -F "/" '{ print $NF }'` ps -q wordpress) sh -c 'rm themeunittestdata.wordpress.xml'
+docker exec -it $(docker compose --project-name `echo $(pwd) | awk -F "/" '{ print $NF }'` ps -q wordpress) sh -c 'curl https://raw.githubusercontent.com/WPTRT/theme-unit-test/master/themeunittestdata.wordpress.xml -o themeunittestdata.wordpress.xml' && docker-wp --path=/var/www/html plugin install wordpress-importer --activate && docker-wp --path=/var/www/html import themeunittestdata.wordpress.xml --authors=create && docker-wp --path=/var/www/html plugin deactivate wordpress-importer && docker exec -it $(docker compose --project-name `echo $(pwd) | awk -F "/" '{ print $NF }'` ps -q wordpress) sh -c 'rm themeunittestdata.wordpress.xml'
 ```
 
 Also if you use the command, you can do it all at once from the wordpress build.
@@ -539,7 +539,7 @@ bash command/wp-build-testdata.sh
 Access the console with Your SERVICE name.
 
 ```
-docker-compose exec [SERVICE name] /bin/bash
+docker compose exec [SERVICE name] /bin/bash
 ```
 
 #### 2. Move your plugin directory
@@ -572,19 +572,19 @@ composer run phpunit
 #### 1. Install WordPress test to `/tmp` dir
 
 ```
-docker-compose exec -w /var/www/html/wp-content/(themes|plugins)/[Your theme or plugin name] bash bin/install-wp-tests.sh wordpress_test root root database
+docker compose exec -w /var/www/html/wp-content/(themes|plugins)/[Your theme or plugin name] bash bin/install-wp-tests.sh wordpress_test root root database
 ```
 
 #### 2. Install PHPUnit and composer dependencies
 
 ```
-docker-compose exec -w /var/www/html/wp-content/(themes|plugins)/[Your theme or plugin name] wordpress_unittest composer install
+docker compose exec -w /var/www/html/wp-content/(themes|plugins)/[Your theme or plugin name] wordpress_unittest composer install
 ```
 
 #### 3. Run phpunit
 
 ```
-docker-compose exec -w /var/www/html/wp-content/(themes|plugins)/[Your theme or plugin name] wordpress_unittest composer run phpunit
+docker compose exec -w /var/www/html/wp-content/(themes|plugins)/[Your theme or plugin name] wordpress_unittest composer run phpunit
 ```
 
 ### Why MailHog ?
