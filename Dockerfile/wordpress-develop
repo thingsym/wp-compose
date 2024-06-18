@@ -11,12 +11,12 @@ ARG PHP_UPLOAD_MAX_FILESIZE
 ARG PHP_POST_MAX_SIZE
 ARG PHP_MAX_EXECUTION_TIME
 
-RUN echo "file_uploads = On\n" \
-	"memory_limit        = ${PHP_MEMORY_LIMIT:-128M}\n" \
-	"upload_max_filesize = ${PHP_UPLOAD_MAX_FILESIZE:-2M}\n" \
-	"post_max_size       = ${PHP_POST_MAX_SIZE:-8M}\n" \
-	"max_execution_time  = ${PHP_MAX_EXECUTION_TIME:-30}\n" \
-	> /usr/local/etc/php/conf.d/uploads.ini \
+RUN echo "file_uploads        = On\n"\
+	"memory_limit        = ${PHP_MEMORY_LIMIT:-128M}\n"\
+	"upload_max_filesize = ${PHP_UPLOAD_MAX_FILESIZE:-2M}\n"\
+	"post_max_size       = ${PHP_POST_MAX_SIZE:-8M}\n"\
+	"max_execution_time  = ${PHP_MAX_EXECUTION_TIME:-30}\n"\
+		> /usr/local/etc/php/conf.d/uploads.ini \
 	&& echo "[Date]\n"\
 	"date.timezone = ${TIMEZONE:-UTC}\n"\
 		> /usr/local/etc/php/conf.d/timezone.ini\
@@ -24,9 +24,23 @@ RUN echo "file_uploads = On\n" \
 	&& cp /usr/src/wordpress/wp-config-sample.php /usr/src/wordpress/wp-config.php
 
 RUN apt update \
-	&& apt install -y vim default-mysql-client libssl-dev libonig-dev \
-	&& apt install -y git subversion zip gettext chromium \
-	&& docker-php-ext-install pdo_mysql mysqli mbstring
+	&& apt -y upgrade \
+	&& apt -y install \
+		vim \
+		default-mysql-client \
+		libssl-dev \
+		libonig-dev \
+		git \
+		subversion \
+		zip \
+		gettext \
+		chromium \
+	&& apt-get clean \
+	&& rm -rf /var/lib/apt/lists/* \
+	&& docker-php-ext-install \
+		pdo_mysql \
+		mysqli \
+		mbstring
 
 ARG MKCERT_CERT_FILE
 ARG MKCERT_KEY_FILE
@@ -48,9 +62,9 @@ RUN set -eux \
 
 ARG MAILHOG_SMTP_PORT
 
-RUN echo "[mail function]\n" \
-	"sendmail_path = \"/usr/local/bin/mhsendmail --smtp-addr=mailhog:${MAILHOG_SMTP_PORT:-1025}\"\n" \
-	> /usr/local/etc/php/conf.d/mailhog.ini \
+RUN echo "[mail function]\n"\
+	"sendmail_path = \"/usr/local/bin/mhsendmail --smtp-addr=mailhog:${MAILHOG_SMTP_PORT:-1025}\"\n"\
+		> /usr/local/etc/php/conf.d/mailhog.ini \
 	&& /bin/bash -c 'set -ex && \
 		ARCH=`uname -m` && \
 		if [ "$ARCH" == "aarch64" ]; then \
