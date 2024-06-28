@@ -1,3 +1,12 @@
+## [1.3.0] - 2024.06.28
+
+- fix mariadb image tag
+- improve Dockerfile
+- fix command from docker-compose to docker compose, and Compose Specification compliant
+- add TIMEZONE argument
+- add .editorconfig
+- rename config file
+
 ## [1.2.0] - 2023.10.20
 
 - add e2e environment
