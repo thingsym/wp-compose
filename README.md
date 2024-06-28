@@ -117,23 +117,23 @@ Use wp-build command
 bash command/wp-build.sh
 ```
 
-Skip to 5, after running the command
+Skip to 6, after running the command
 
 Or set manually
 
-#### 3. Create WordPress config
+#### 4. Create WordPress config
 
 ```
 docker-wp --path=/var/www/html config create --dbname=wordpress --dbuser=root --dbpass=root --dbhost=database --dbprefix=wp_ --dbcharset=utf8mb4 --dbcollate=utf8mb4_general_ci --force
 ```
 
-#### 4. Install WordPress
+#### 5. Install WordPress
 
 ```
 docker-wp --path=/var/www/html core install --url='https://localhost' --title='test' --admin_user=admin --admin_password=admin --admin_email=admin@example.com
 ```
 
-#### 5. Acsess a WordPress Site
+#### 6. Acsess a WordPress Site
 
 * Acsess WordPress site at [https://localhost](https://localhost)
 * Access WordPress dashboard at [https://localhost/wp-admin](https://localhost/wp-admin)
@@ -206,23 +206,23 @@ Use wp-build command
 bash command/wp-build.sh
 ```
 
-Skip to 5, after running the command
+Skip to 6, after running the command
 
 Or set manually
 
-#### 3. Create WordPress config
+#### 4. Create WordPress config
 
 ```
 docker-wp --path=/var/www/html config create --dbname=wordpress --dbuser=root --dbpass=root --dbhost=database --dbprefix=wp_ --dbcharset=utf8mb4 --dbcollate=utf8mb4_general_ci --force
 ```
 
-#### 4. Install WordPress
+#### 5. Install WordPress
 
 ```
 docker-wp --path=/var/www/html core install --url='https://localhost' --title='test' --admin_user=admin --admin_password=admin --admin_email=admin@example.com
 ```
 
-#### 5. Acsess a WordPress Site
+#### 6. Acsess a WordPress Site
 
 * Acsess WordPress site at [https://localhost](https://localhost)
 * Access WordPress dashboard at [https://localhost/wp-admin](https://localhost/wp-admin)
@@ -379,23 +379,23 @@ Use wp-build command
 bash command/wp-build.sh
 ```
 
-Skip to 8, after running the command
+Skip to 9, after running the command
 
 Or set manually
 
-#### 6. Create WordPress config
+#### 7. Create WordPress config
 
 ```
 docker-wp --path=/var/www/html config create --dbname=wordpress --dbuser=root --dbpass=root --dbhost=database --dbprefix=wp_ --dbcharset=utf8mb4 --dbcollate=utf8mb4_general_ci --force
 ```
 
-#### 7. Install WordPress
+#### 8. Install WordPress
 
 ```
 docker-wp --path=/var/www/html core install --url='https://wp-compose.test' --title='test' --admin_user=admin --admin_password=admin --admin_email=admin@example.com
 ```
 
-#### 8. Acsess a WordPress Site
+#### 9. Acsess a WordPress Site
 
 * Acsess WordPress site at [https://wp-compose.test](https://wp-compose.test)
 * Access WordPress dashboard at [https://wp-compose.test/wp-admin](https://wp-compose.test/wp-admin)
