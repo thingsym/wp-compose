@@ -33,15 +33,9 @@ services:
       WORDPRESS_TABLE_PREFIX: "${WORDPRESS_TABLE_PREFIX:-wp_}"
       WORDPRESS_DEBUG: "${WORDPRESS_DEBUG:-true}"
     volumes:
-      - type: bind
-        source: ./wordpress
-        target: /var/www/html
-      - type: bind
-        source: ./src/backup
-        target: /var/www/backup
-      - type: bind
-        source: ./src/import
-        target: /var/www/import
+      - ./wordpress:/var/www/html
+      - ./src/backup:/var/www/backup
+      - ./src/import:/var/www/import
 
   database:
     image: "mariadb:${MARIADB_IMAGE_TAG:-latest}"
@@ -55,14 +49,12 @@ services:
     networks:
       - wordpress
     environment:
-      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-admin}"
-      MYSQL_DATABASE: "${WORDPRESS_DB_NAME:-wordpress}"
-      MYSQL_USER: "${WORDPRESS_DB_USER:-admin}"
-      MYSQL_PASSWORD: "${WORDPRESS_DB_PASSWORD:-admin}"
+      MARIADB_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-admin}"
+      MARIADB_DATABASE: "${WORDPRESS_DB_NAME:-wordpress}"
+      MARIADB_USER: "${WORDPRESS_DB_USER:-admin}"
+      MARIADB_PASSWORD: "${WORDPRESS_DB_PASSWORD:-admin}"
     volumes:
-      - type: bind
-        source: ./database
-        target: /var/lib/mysql
+      - ./database:/var/lib/mysql
 
   wp_cli:
     image: wordpress:cli
@@ -73,9 +65,7 @@ services:
     networks:
       - wordpress
     volumes:
-      - type: bind
-        source: ./wordpress
-        target: /var/www/html
+      - ./wordpress:/var/www/html
 
   mailhog:
     container_name: "wp-compose--${DOMAIN:-localhost}--mailhog"
