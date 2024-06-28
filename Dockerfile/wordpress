@@ -18,7 +18,7 @@ RUN echo "file_uploads        = On\n"\
 	"max_execution_time  = ${PHP_MAX_EXECUTION_TIME:-30}\n"\
 		> /usr/local/etc/php/conf.d/uploads.ini \
 	&& echo "[Date]\n"\
-"date.timezone = ${TIMEZONE:-UTC}\n"\
+	"date.timezone = ${TIMEZONE:-UTC}\n"\
 		> /usr/local/etc/php/conf.d/timezone.ini\
 	&& rm /usr/src/wordpress/wp-config-docker.php \
 	&& cp /usr/src/wordpress/wp-config-sample.php /usr/src/wordpress/wp-config.php
