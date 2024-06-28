@@ -434,6 +434,9 @@ LOOPBACK_IP=127.0.0.1
 # If you change default DOMAIN from localhost, set domain to /etc/hosts.
 DOMAIN=localhost
 
+# See https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+TIMEZONE=
+
 # https://hub.docker.com/_/wordpress
 WORDPRESS_IMAGE_TAG=latest
 
@@ -448,10 +451,15 @@ WORDPRESS_DB_USER=root
 WORDPRESS_DB_PASSWORD=root
 WORDPRESS_TABLE_PREFIX=wp_
 WORDPRESS_DEBUG=true
+
+# for E2E test container
+LOOPBACK_IP_FOR_E2E=
+DOMAIN_FOR_E2E=
 ```
 
 * `LOOPBACK_IP` (required) Local Loopback Address from 127.0.0.1 to 127.255.255.255 (default: `127.0.0.1`)
 * `DOMAIN` (required) Domain name (default: `localhost`)
+* `TIMEZONE` (default: `UTC`)
 * `WORDPRESS_IMAGE_TAG` (required) WordPress docker image tag name. See https://hub.docker.com/_/wordpress (default: `latest`)
 * `MARIADB_IMAGE_TAG` (required) MariaDB docker image tag name. See https://hub.docker.com/_/mariadb (default: `latest`)
 * `MYSQL_ROOT_PASSWORD` database root password (default: `root`)
@@ -461,6 +469,8 @@ WORDPRESS_DEBUG=true
 * `WORDPRESS_DB_PASSWORD` database password (default: `root`)
 * `WORDPRESS_TABLE_PREFIX` database prefix (default: `wp_`)
 * `WORDPRESS_DEBUG` debug mode (default: `true`/ value: `true` | `false`)
+* `LOOPBACK_IP_FOR_E2E` Local Loopback Address for e2e from 127.0.0.1 to 127.255.255.255 (default: `127.0.0.1`)
+* `DOMAIN_FOR_E2E` Domain name for e2e (default: `localhost`)
 
 ## File layout
 
@@ -491,13 +501,25 @@ Directory structure of the WP Compose is as follows.
 
 To put the themes/plugins you are developing in the `/src/themes` or `/src/plugins` folder and mount it to WordPress container.
 
-Set volumes in compose.yml.
+Set volumes in compose.yml as short syntax.
 
 ```
 volumes:
-	# Set the path of the theme or plugin you are developing.
-	- ./src/themes/YOUR_THEME:/var/www/html/wp-content/plugins/YOUR_THEME
-	- ./src/plugins/YOUR_PLUGIN:/var/www/html/wp-content/plugins/YOUR_PLUGIN
+  # Set the path of the theme or plugin you are developing.
+  - ./src/themes/YOUR_THEME:/var/www/html/wp-content/plugins/YOUR_THEME
+  - ./src/plugins/YOUR_PLUGIN:/var/www/html/wp-content/plugins/YOUR_PLUGIN
+```
+
+Or as long syntax
+
+```
+volumes:
+  - type: bind
+    source: ./src/themes/YOUR_THEME
+    target: /var/www/html/wp-content/themes/YOUR_THEME
+  - type: bind
+    source: ./src/plugins/YOUR_PLUGIN
+    target: /var/www/html/wp-content/plugins/YOUR_PLUGIN
 ```
 
 ### Export SQL file using WP-CLI
@@ -645,4 +667,4 @@ WP Compose is distributed under GPLv2.
 
 [thingsym](https://github.com/thingsym)
 
-Copyright (c) 2023 thingsym
+Copyright (c) 2023 - 2024 thingsym
