@@ -1,3 +1,9 @@
+## [1.3.1] - 2024.09.03
+
+* add path
+* fix README
+* specify the version of the middleware docker image
+
 ## [1.3.0] - 2024.06.28
 
 - fix mariadb image tag
