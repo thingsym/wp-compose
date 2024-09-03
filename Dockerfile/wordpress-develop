@@ -75,10 +75,10 @@ RUN echo "[mail function]\n"\
 	&& chmod +x mhsendmail \
 	&& mv mhsendmail /usr/local/bin/mhsendmail
 
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
 
-COPY --from=node:lts /usr/local/include/ /usr/local/include/
-COPY --from=node:lts /usr/local/lib/ /usr/local/lib/
-COPY --from=node:lts /usr/local/bin/ /usr/local/bin/
+COPY --from=node:20 /usr/local/include/ /usr/local/include/
+COPY --from=node:20 /usr/local/lib/ /usr/local/lib/
+COPY --from=node:20 /usr/local/bin/ /usr/local/bin/
 
 COPY --from=wordpress:cli /usr/local/bin/wp /usr/local/bin/wp
