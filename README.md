@@ -63,12 +63,12 @@ alias
 After launching WordPress container, check the following commands. Works the same as the wp command.
 
 ```
-docker-wp help
+docker-wp --help
 ```
 
 ## Getting Started
 
-WP Compose has two uses. One is to simply Acsess a WordPress Site. The other adds a build and unit test environment container for development. Also you can launch multiple containers using domains.
+WP Compose has two uses. One is to simply acsess a WordPress Site. The other adds a build and unit test environment container for development. Also you can launch multiple containers using domains.
 
 * [Launch localhost (127.0.0.1)](#-launch-localhost-127001)
 * [Launch localhost (127.0.0.1) with unit test container](#-launch-localhost-127001-with-unit-test-container)
@@ -155,7 +155,13 @@ docker compose stop
 docker compose down -v
 ```
 
-Or added remove Docker Image
+Or added remove only custom Docker Image (wordpress and wordpress-develop built via Dockerfile)
+
+```
+docker compose down -v --rmi local
+```
+
+Or added remove all Docker Image
 
 ```
 docker compose down -v --rmi all
@@ -244,7 +250,13 @@ docker compose -f compose-develop.yml stop
 docker compose -f compose-develop.yml down -v
 ```
 
-Or added remove Docker Image
+Or added remove only custom Docker Image (wordpress and wordpress-develop built via Dockerfile)
+
+```
+docker compose -f compose-develop.yml down -v --rmi local
+```
+
+Or added remove all Docker Image
 
 ```
 docker compose -f compose-develop.yml down -v --rmi all
@@ -280,8 +292,16 @@ The following shows launching `wp-compose.test` on IP address `127.56.0.1`.
 ```
 cd wp-compose-x.x.x
 vi .env
-```
 
+# edit .env
+
+# Local Loopback Address from 127.0.0.1 to 127.255.255.255
+LOOPBACK_IP=127.56.0.1
+
+# If you change default DOMAIN from localhost, set domain to /etc/hosts.
+DOMAIN=wp-compose.test
+
+```
 
 #### 2. Set up Local Loopback Address on Network Insterface (each time)
 
@@ -417,7 +437,13 @@ docker compose stop
 docker compose down -v
 ```
 
-Or added remove Docker Image
+Or added remove only custom Docker Image (wordpress and wordpress-develop built via Dockerfile)
+
+```
+docker compose down -v --rmi local
+```
+
+Or added remove all Docker Image
 
 ```
 docker compose down -v --rmi all
@@ -441,7 +467,7 @@ TIMEZONE=
 WORDPRESS_IMAGE_TAG=latest
 
 # https://hub.docker.com/_/mariadb
-MARIADB_IMAGE_TAG=latest
+MARIADB_IMAGE_TAG=10.6.18-focal
 
 MYSQL_ROOT_PASSWORD=root
 
@@ -525,7 +551,7 @@ volumes:
 ### Export SQL file using WP-CLI
 
 ```
-docker-wp db export /var/www/backup/backup-`date +%Y%m%d%H%M%S`.sql
+docker-wp --path=/var/www/html db export /var/www/backup/backup-`date +%Y%m%d%H%M%S`.sql
 ```
 
 Or alternatively use the command
